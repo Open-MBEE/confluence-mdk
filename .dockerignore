@@ -1,0 +1,13 @@
+build/
+data/
+input/
+scrap/
+log/
+node_modules/
+
+.DS_Store
+sftp-config.json
+*.env*
+.eslintrc.yaml
+*.ignore
+Dockerfile
