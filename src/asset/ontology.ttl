@@ -1,0 +1,324 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+@prefix : <https://openmbee.org/rdf/confluence-mdk/ontology/> .
+@prefix dt: <https://openmbee.org/rdf/confluence-mdk/datatype/> .
+
+
+:Document a owl:Class ;
+	rdfs:label "Wiki Page Document" ;
+	.
+
+:DocumentElement a owl:Class ;
+	rdfs:label "Document Element" ;
+	.
+
+:Heading a owl:Class ;
+	rdfs:subClassOf :DocumentElement ;
+	rdfs:label "Heading" ;
+	.
+
+:Heading1 a owl:Class ;
+	rdfs:subClassOf :Heading ;
+	rdfs:label "Heading 1" ;
+	.
+
+:Heading2 a owl:Class ;
+	rdfs:subClassOf :Heading ;
+	rdfs:label "Heading 2" ;
+	.
+
+:Heading3 a owl:Class ;
+	rdfs:subClassOf :Heading ;
+	rdfs:label "Heading 3" ;
+	.
+
+:Heading4 a owl:Class ;
+	rdfs:subClassOf :Heading ;
+	rdfs:label "Heading 4" ;
+	.
+
+:Heading5 a owl:Class ;
+	rdfs:subClassOf :Heading ;
+	rdfs:label "Heading 5" ;
+	.
+
+:Heading6 a owl:Class ;
+	rdfs:subClassOf :Heading ;
+	rdfs:label "Heading 6" ;
+	.
+
+:List a owl:Class ;
+	rdfs:label "List" ;
+	rdfs:subClassOf :DocumentElement ;
+	.
+
+:OrderedList a owl:Class ;
+	rdfs:subClassOf :List ;
+	rdfs:label "Enumerated List", "Ordered List" ;
+	.
+
+:UnorderedList a owl:Class ;
+	rdfs:subClassOf :List ;
+	rdfs:label "Bulletted List", "Unordered List" ;
+	.
+
+:ListItem a owl:Class ;
+	rdfs:subClassOf :DocumentElement ;
+	rdfs:label "List Item" ;
+	.
+
+:Link a owl:Class ;
+	rdfs:subClassOf :DocumentElement;
+	rdfs:label "Link" ;
+	.
+
+:ExternalLink a owl:Class ;
+	rdfs:subClassOf :Link ;
+	rdfs:label "External Link" ;
+	.
+
+:PageReference a owl:Class ;
+	rdfs:subClassOf :Link ;
+	rdfs:label "Page Reference" ;
+	.
+
+:Table a owl:Class ;
+	rdfs:subClassOf :DocumentElement ;
+	rdfs:label "Table" ;
+	.
+
+:Row a owl:Class ;
+	rdfs:subClassOf :DocumentElement ;
+	rdfs:label "Row" ;
+	.
+
+:Cell a owl:Class ;
+	rdfs:subClassOf :DocumentElement ;
+	rdfs:label "Cell" ;
+	.
+
+:HeaderCell a owl:Class ;
+	rdfs:subClassOf :Cell ;
+	rdfs:label "Header Cell" ;
+	.
+
+:DataCell a owl:Class ;
+	rdfs:subClassOf :Cell ;
+	rdfs:label "Data Cell" ;
+	.
+
+:DocumentList a owl:Class ;
+	rdfs:subClassOf [
+		owl:intersectionOf (
+			rdf:List
+			[
+				a owl:Restriction ;
+				owl:onProperty rdf:first ;
+				owl:allValuesFrom ::Document ;
+			]
+			[
+				a owl:Restriction ;
+				owl:onProperty rdf:rest ;
+				owl:allValuesFrom :DocumentList ;
+			]
+		) ;
+	] ;
+	.
+
+:DocumentElementList a owl:Class ;
+	rdfs:subClassOf [
+		owl:intersectionOf (
+			rdf:List
+			[
+				a owl:Restriction ;
+				owl:onProperty rdf:first ;
+				owl:allValuesFrom :DocumentElement ;
+			]
+			[
+				a owl:Restriction ;
+				owl:onProperty rdf:rest ;
+				owl:allValuesFrom :DocumentElementList ;
+			]
+		) ;
+	] ;
+	.
+
+:RowList a owl:Class ;
+	rdfs:subClassOf [
+		owl:intersectionOf (
+			rdf:List
+			[
+				a owl:Restriction ;
+				owl:onProperty rdf:first ;
+				owl:allValuesFrom :Row ;
+			]
+			[
+				a owl:Restriction ;
+				owl:onProperty rdf:rest ;
+				owl:allValuesFrom :RowList ;
+			]
+		) ;
+	] ;
+	.
+
+:CellList a owl:Class ;
+	rdfs:subClassOf [
+		owl:intersectionOf (
+			rdf:List
+			[
+				a owl:Restriction ;
+				owl:onProperty rdf:first ;
+				owl:allValuesFrom :Cell ;
+			]
+			[
+				a owl:Restriction ;
+				owl:onProperty rdf:rest ;
+				owl:allValuesFrom :CellList ;
+			]
+		) ;
+	] ;
+	.
+
+# properties
+
+:ancestorDocument a owl:TransitiveProperty ;
+	rdfs:label "ancestor document" ;
+	.
+
+:descendentDocument a owl:TransitiveProperty ;
+	rdfs:label "descendent document" ;
+	.
+
+:parentDocument a owl:ObjectProperty ;
+	rdfs:subPropertyOf :ancestorDocument ;
+	rdfs:domain :Document ;
+	rdfs:range :Document ;
+	rdfs:label "parent document" ;
+	.
+
+:childDocument a owl:ObjectProperty ;
+	rdfs:subPropertyOf :descendentDocument ;
+	rdfs:domain :Document ;
+	rdfs:range :Document ;
+	rdfs:label "child document" ;
+	owl:inverseOf :parentDocument ;
+	.
+
+:siblingDocument a owl:SymmetricProperty, owl:IrreflexiveProperty ;
+	owl:propertyChainAxiom ( :parentDocument :childDocument ) ;
+	rdfs:domain :Document ;
+	rdfs:range :Document ;
+	rdfs:label "sibling document" ;
+	.
+
+
+:ancestorElement a owl:TransitiveProperty ;
+	rdfs:label "ancestor element" ;
+	.
+
+:descendentElement a owl:TransitiveProperty ;
+	rdfs:label "descendent element" ;
+	.
+
+
+:content a owl:ObjectProperty ;
+	rdfs:domain :Document ;
+	rdfs:range :DocumentElementList ;
+	rdfs:label "contents" ;
+	.
+
+:after a owl:TransitiveProperty ;
+	.
+
+rdf:rest rdfs:subPropertyOf :after ;
+	.
+
+:includes a owl:ObjectProperty ;
+	owl:propertyChainAxiom ( :after rdf:first ) ;
+	.
+
+:contains a owl:ObjectProperty ;
+	owl:propertyChainAxiom ( :body :includes ) ;
+	.
+
+:containsText a owl:ObjectProperty ;
+	owl:propertyChainAxiom ( :contains :text ) ;
+	.
+
+
+:body a owl:ObjectProperty ;
+	rdfs:domain :DocumentElement ;
+	rdfs:range :DocumentElementList ;
+	rdfs:label "body" ;
+	.
+
+:childElement a owl:ObjectProperty ;
+	rdfs:subPropertyOf :descendentElement ;
+	rdfs:domain :DocumentElement ;
+	rdfs:range :DocumentElement ;
+	rdfs:label "child element" ;
+	.
+
+:parentElement a owl:ObjectProperty ;
+	owl:inverseOf :childElements ;
+	rdfs:label "parent element" ;
+	.
+
+
+:title a owl:DatatypeProperty ;
+	rdfs:domain :Document ;
+	rdfs:range xsd:string ;
+	rdfs:label "title" ;
+	.
+
+:text a owl:DatatypeProperty ;
+	rdfs:domain :DocumentElement ;
+	rdfs:range xsd:string ;
+	rdfs:label "text" ;
+	.
+
+:href a owl:ObjectProperty ;
+	rdfs:domain :ExternalLink ;
+	rdfs:range xsd:anyURI ;
+	rdfs:label "url" ;
+	.
+
+:ref a owl:DatatypeProperty ;
+	rdfs:domain :PageReference ;
+	rdfs:range dt:pageReference ;
+	rdfs:label "page reference" ;
+	.
+
+:columnLength a owl:DatatypeProperty ;
+	rdfs:domain :Table ;
+	rdfs:range xsd:integer ;
+	rdfs:label "number of columns" ;
+	.
+
+:rowLength a owl:DatatypeProperty ;
+	rdfs:domain :Table ;
+	rdfs:range xsd:integer ;
+	rdfs:label "number of rows" ;
+	.
+
+:rows a owl:ObjectProperty ;
+	rdfs:domain :Table ;
+	rdfs:range :RowList ;
+	rdfs:label "rows" ;
+	.
+
+:cells a owl:ObjectProperty ;
+	rdfs:domain :Row ;
+	rdfs:range :CellList ;
+	rdfs:label "cells" ;
+	.
+
+:sibling a owl:SymmetricProperty, owl:IrreflexiveProperty ;
+	owl:propertyChainAxiom ( [ owl:inverseOf rdf:first ] rdf:rest rdf:first ) ;
+	rdfs:domain :DocumentElement ;
+	rdfs:range :DocumentElement ;
+	rdfs:label "sibling" ;
+	.

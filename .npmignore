@@ -1,0 +1,10 @@
+.DS_Store
+input/
+build/
+scrap
+node_modules
+*.env
+sftp-config.json
+data/
+Dockerfile
+.eslintrc.yaml
