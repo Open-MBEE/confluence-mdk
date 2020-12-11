@@ -8,3 +8,4 @@ sftp-config.json
 data/
 Dockerfile
 .eslintrc.yaml
+*.ignore
