@@ -164,7 +164,7 @@ export class Document {
 
 		// descriptor has enter
 		if(g_desc.enter) {
-			return k_node.merge(g_desc.enter(h_attrs || {}));
+			k_node.merge(g_desc.enter(h_attrs || {}));
 		}
 
 		// only a single text node
@@ -274,7 +274,7 @@ export class Document {
 
 		// descriptor has collector
 		if(g_desc.collect) {
-			k_node.data = g_desc.collect(nonorphans(k_node._a_collect));
+			k_node.merge(g_desc.collect(nonorphans(k_node._a_collect)));
 		}
 
 		// pop state from stack

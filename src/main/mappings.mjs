@@ -5,6 +5,13 @@ import {
 	escape_html,
 } from '../util/data.mjs';
 
+
+const attrs_to_c2 = h_attrs => Object.entries(h_attrs)
+	.reduce((hc2_out, [si_key, s_value]) => ({
+		...hc2_out,
+		[si_key]: '"'+s_value,
+	}), {});
+
 const H_CTM_FORMATTING = {
 	b: {
 		flatten: s => `<b>${s}</b>`,
@@ -60,6 +67,13 @@ export const H_CTM_ROOT = {
 	p: {
 		auto: (hc2_content, h_attrs) => nonempty(hc2_content, {
 			a: ':Paragraph',
+			...hc2_content,
+		}),
+	},
+
+	div: {
+		auto: (hc2_content, h_attrs) => nonempty(hc2_content, {
+			a: ':Container',
 			...hc2_content,
 		}),
 	},
@@ -182,5 +196,36 @@ export const H_CTM_ROOT = {
 		},
 
 		collect: flat_reduce,
+	},
+
+	'ac:structured-macro': {
+		enter: h_attrs => ({
+			a: ':Macro',
+			...attrs_to_c2(h_attrs),
+		}),
+
+		children: {
+			'ac:parameter': {
+				enter: h_attrs => ({
+					a: ':Parameter',
+					...attrs_to_c2(h_attrs),
+				}),
+
+				text: s_text => ({
+					':value': '"'+s_text,
+				}),
+			},
+
+			'ac:rich-text-body': {
+				text: s_text => ({
+					':text': '"'+s_text,
+				}),
+			},
+		},
+
+		collect: a_children => ({
+			':parameter': a_children.filter(hc2 => ':Parameter' === hc2.a),
+			...a_children.filter(hc2 => ':text' in hc2)[0],
+		}),
 	},
 };

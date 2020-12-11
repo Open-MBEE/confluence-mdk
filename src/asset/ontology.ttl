@@ -110,6 +110,16 @@
 	rdfs:label "Data Cell" ;
 	.
 
+:Macro a owl:Class ;
+	rdfs:subClassOf :DocumentElement ;
+	rdfs:label "Macro" ;
+	.
+
+:Parameter a owl:Class ;
+	rdfs:subClassOf :DocumentElement ;
+	rdfs:label "Parameter" ;
+	.
+
 :DocumentList a owl:Class ;
 	rdfs:subClassOf [
 		owl:intersectionOf (
@@ -321,4 +331,34 @@ rdf:rest rdfs:subPropertyOf :after ;
 	rdfs:domain :DocumentElement ;
 	rdfs:range :DocumentElement ;
 	rdfs:label "sibling" ;
+	.
+
+ac:name a owl:DatatypeProperty ;
+	rdfs:domain :Macro ;
+	rdfs:range xsd:string ;
+	rdfs:label "ac:name" ;
+	.
+
+ac:macro-id a owl:DatatypeProperty ;
+	rdfs:domain :Macro ;
+	rdfs:range xsd:string ;
+	rdfs:label "ac:macro-id" ;
+	.
+
+ac:schema-version a owl:DatatypeProperty ;
+	rdfs:domain :Macro ;
+	rdfs:range xsd:string ;
+	rdfs:label "ac:schema-version" ;
+	.
+
+:parameter a owl:ObjectProperty ;
+	rdfs:domain :Macro ;
+	rdfs:range :Parameter ;
+	rdfs:label "parameter" ;
+	.
+
+:value a owl:DatatypeProperty ;
+	rdfs:domain :Parameter ;
+	rdfs:range xsd:string ;
+	rdfs:label "value" ;
 	.
