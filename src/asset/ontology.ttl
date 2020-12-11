@@ -5,7 +5,7 @@
 
 @prefix : <https://openmbee.org/rdf/confluence-mdk/ontology/> .
 @prefix dt: <https://openmbee.org/rdf/confluence-mdk/datatype/> .
-
+@prefix ac: <https://openmbee.org/rdf/confluence-mdk/atlassian-confluence/> .
 
 :Document a owl:Class ;
 	rdfs:label "Wiki Page Document" ;
