@@ -28,7 +28,7 @@ export async function xhtml_rdf(g_convert) {
 
 	// resolve page id using search API
 	async function resolve_page_id(s_space, s_title) {
-		const g_search = await fetch(`${p_endpoint}/search?`+(new URLSearchParams({
+		const a_search = await fetch(`${p_endpoint}/search?`+(new URLSearchParams({
 			cql: `type=page and space="${s_space}" and title="${s_title}"`,
 		})), {
 			method: 'GET',
@@ -37,7 +37,7 @@ export async function xhtml_rdf(g_convert) {
 			},
 		});
 
-		const a_results = g_search.results;
+		const a_results = a_search[0].results;
 		if(!a_results.length) {
 			throw new Error(`No such wiki page found in space "${s_space}" with title "${s_title}"`);
 		}

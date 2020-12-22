@@ -39,7 +39,7 @@ export default class WikiCrawler {
 
 	async _fetch(...a_args) {
 		const f_release = await this._k_locks.acquire();
-		const w_data = fetch(...a_args);
+		const w_data = (await fetch(...a_args))[0];
 		f_release();
 		return w_data;
 	}

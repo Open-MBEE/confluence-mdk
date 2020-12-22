@@ -7,13 +7,25 @@ const cherr = chalk.stderr;
 
 import StreamJson from '../util/stream-json.js';
 const {
-	JsonStreamObject,
+	JsonStreamValues,
 } = StreamJson;
 
 // simple direct https request
 export const request = (p_url, gc_request) => new Promise((fk_resolve) => {
 	(https.request(p_url, gc_request, fk_resolve)).end();
 });
+
+// fetch required environment variable
+export function env(si_var) {
+	let s_value = process.env[si_var];
+
+	// assert required environment variables
+	if(!s_value) {
+		throw new Error(`the following environment variable is required but is either not set or is empty: ${si_var}`);
+	}
+
+	return s_value;
+}
 
 // fetch remote JSON
 export function fetch(p_url, gc_request, f_connected=null) {
@@ -51,13 +63,15 @@ export function fetch(p_url, gc_request, f_connected=null) {
 			if(n_status >= 200 && n_status < 300) {
 				let g_json = {};
 
+				ds_res.setEncoding('utf8');
+
 				// load response body
 				const ds_pipe = stream.pipeline([
 					ds_res,
-					JsonStreamObject.withParser(),
+					JsonStreamValues.withParser(),
 				], (e_pipe) => {
 					if(e_pipe) {
-						throw new Error(`Error while streaming parsing response JSON from <${p_url}>: ${e_pipe.stack}`);
+						throw new Error(`Error while parsing stream response JSON from <${p_url}>: ${e_pipe.stack}`);
 					}
 					else {
 						fk_resolve(g_json);
@@ -97,3 +111,62 @@ export function fetch(p_url, gc_request, f_connected=null) {
 		return dp_exec;
 	}
 }
+
+
+const plain_object = z => 'object' === typeof z && null !== z && Object === z.constructor
+	&& '[object Object]' === Object.prototype.toString.call(z);
+
+// upload payload
+export const upload = (z_input, p_url, gc_request) => new Promise((fk_resolve, fe_reject) => {
+	let dt_waiting;
+
+	// open request
+	const ds_upload = fetch(p_url, gc_request, () => {
+		clearInterval(dt_waiting);
+
+		return [fk_resolve, fe_reject];
+	});
+
+	// string, Buffer, or ArrayBuffer; submit payload
+	if('string' === typeof z_input || z_input?.byteLength) {
+		ds_upload.end(z_input);
+	}
+	// stream
+	else if('function' === typeof z_input.setEncoding) {
+		return stream.pipeline([
+			z_input,
+			ds_upload,
+		], (e_upload) => {
+			if(e_upload) {
+				fe_reject(e_upload);
+			}
+			else {
+				console.warn(`Payload successfully uploaded to <${p_url}>`);
+				const t_start = Date.now();
+				dt_waiting = setInterval(() => {
+					const xs_elapsed = Math.round((Date.now() - t_start) / 1000);
+					console.warn(`${Math.floor(xs_elapsed / 60)}m${((xs_elapsed % 60)+'').padStart(2, '0')}s have elapsed and still waiting...`);
+				}, 1000*60*5);  // every 5 minutes
+			}
+		});
+	}
+	// json
+	else if(plain_object(z_input)) {
+		ds_upload.end(JSON.stringify(z_input));
+	}
+	// other
+	else {
+		throw new Error(`Not able to duck-type payload: ${z_input}`);
+	}
+
+	ds_upload.on('error', fe_reject);
+	ds_upload.on('finish', () => {
+		console.warn(`Payload successfully uploaded to <${p_url}>`);
+		const t_start = Date.now();
+		dt_waiting = setInterval(() => {
+			const xs_elapsed = Math.round((Date.now() - t_start) / 1000);
+			console.warn(`${Math.floor(xs_elapsed / 60)}m${((xs_elapsed % 60)+'').padStart(2, '0')}s have elapsed and still waiting...`);
+		}, 1000*60*5);  // every 5 minutes
+	});
+});
+
