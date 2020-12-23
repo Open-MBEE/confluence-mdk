@@ -9,6 +9,7 @@ This CLI tool allows you to export the page structure and contents of Wiki pages
    - [from source](#install-from-source)
  - [CLI Usage](#cli)
    - [`export` command](#cli-export)
+   - [`neptune` command](#cli-neptune)
 
 
 ## Install from Docker Hub
@@ -147,3 +148,37 @@ Say we have a root wiki page at `https://wiki.xyz.org/display/somespace/PageTitl
 ```console
 $ confluence-mdk export https://wiki.xyz.org/display/somespace/PageTitle > wiki-export.ttl
 ```
+
+
+### CLI: Neptune
+
+Use `confluence-mdk neptune --help` for the latest documentation about this command's options.
+
+This command provides some basic control over a Neptune instance for (re)loading RDF data from your local machine to an S3 bucket and then triggering Neptune's bulk loader on that bucket.
+
+For now, the only subcommand available is `neptune import`, which does the following tasks in listed order:
+ 1. Uploads the Turtle stream on stdin to an S3 object named `stdin.ttl` (overwriting the remote object if it already exists), prepending the given `--prefix` to the object name.
+ 2. Uploads the Turtle file `./src/asset/ontology.ttl` to an S3 object named `ontology.ttl` (overwriting the remote object if it already exists), prepending the given `--prefix` to the object name.
+ 2. Clears the specified named graph on the Neptune instance given by `--graph`.
+ 3. Invokes a bulk load command on the Neptune instance to load all objects as RDF files under the given `--prefix` S3 prefix (which should include `stdin.ttl` and `ontology.ttl`).
+ 4. Logs the outputs to stdout.
+
+For this command, the following environment variables need to be set:
+
+ - `NEPTUNE_REGION` - the AWS region in which the Neptune cluster is located
+ - `NEPTUNE_S3_BUCKET_URL` - the `s3://...` bucket URL
+ - `NEPTUNE_S3_IAM_ROLE_ARN` - the ARN associated with the Neptune cluster's role for loading data from S3
+ - `AWS_ACCESS_KEY_ID`  - AWS access key id
+ - `AWS_SECRET_ACCESS_KEY` - AWS secret access key
+ - `SPARQL_ENDPOINT` - the public URL to the SPARQL endpoint exposed by the Neptune cluster
+ - `SPARQL_PROXY` - optional URL to a proxy used for sending requests to SPARQL endpoint (requests must originate from a machine within same VPC as cluster, using proxy here allows you to send HTTP(S) requests thru ssh tunnel you open to ec2 machine)
+
+#### `import` Options:
+ - `--prefix` -- string to prepend to the S3 objects, e.g., `my-folder/`
+ - `--graph` -- IRI of the named graph to load all the RDF data into, e.g., `https://wiki.xyz.org/display/Space+Rocks`
+
+An example command:
+```console
+$ confluence-mdk neptune import --prefix wiki-rdf/ --graph  https://wiki.xyz.org/display/somespace < wiki-export.ttl
+```
+

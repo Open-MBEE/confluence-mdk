@@ -82,20 +82,20 @@ y_yargs = y_yargs.command({
 });
 
 
-// `entail` command
-y_yargs = y_yargs.command({
-	command: 'entail',
-	describe: 'Generate entailments for a given dataset using the OpenMBEE confluence-mdk ontology',
-	builder: _yargs => _yargs
-		.usage('confluence-mdk entail [OPTIONS...] < input_file.ttl')
-		.options({
+// // `entail` command
+// y_yargs = y_yargs.command({
+// 	command: 'entail',
+// 	describe: 'Generate entailments for a given dataset using the OpenMBEE confluence-mdk ontology',
+// 	builder: _yargs => _yargs
+// 		.usage('confluence-mdk entail [OPTIONS...] < input_file.ttl')
+// 		.options({
 
-		})
-		.help(),
-	handler: wrap_handler(async(g_argv) => {
+// 		})
+// 		.help(),
+// 	handler: wrap_handler(async(g_argv) => {
 		
-	}),
-});
+// 	}),
+// });
 
 
 // `neptune` command
@@ -104,36 +104,6 @@ y_yargs = y_yargs.command({
 	describe: 'Control a remote AWS Neptune triplestore',
 	builder: _yargs => _yargs
 		.usage('confluence-mdk neptune <subcommand>')
-		// .command({
-		// 	command: 'clear',
-		// 	describe: 'Clear the default graph',
-		// 	builder: __yargs => __yargs
-		// 		.usage('confluence-mdk neptune clear')
-		// 		.help(),
-		// 	handler: wrap_handler(async(g_argv) => {
-		// 		console.log('neptune clear');
-		// 	}),
-		// })
-		// .command({
-		// 	command: 'upload',
-		// 	describe: 'Uploads the Turtle file on stdin to the configured S3 bucket',
-		// 	builder: __yargs => __yargs
-		// 		.usage('confluence-mdk neptune upload')
-		// 		.help(),
-		// 	handler: wrap_handler(async(g_argv) => {
-		// 		console.log('neptune upload');
-		// 	}),
-		// })
-		// .command({
-		// 	command: 'upsert',
-		// 	describe: 'Upserts the Turtle files uploaded to the configured S3 bucket into the Neptune instance',
-		// 	builder: __yargs => __yargs
-		// 		.usage('confluence-mdk neptune upload')
-		// 		.help(),
-		// 	handler: wrap_handler(async(g_argv) => {
-		// 		console.log('neptune upload');
-		// 	}),
-		// })
 		.command({
 			command: 'import',
 			describe: 'Uploads the ontology and the Turtle file on stdin to the configured S3 bucket (overwriting existing objects), clears the default graph, then bulk loads the data from S3 into the default graph',
@@ -181,9 +151,6 @@ y_yargs = y_yargs.command({
 			AWS_SECRET_ACCESS_KEY    AWS secret access key
 		`.replace(/\n[ \t]+/g, '\n  '))
 		.help().version(false),
-	// handler: wrap_handler(async(g_argv) => {
-		
-	// }),
 });
 
 
