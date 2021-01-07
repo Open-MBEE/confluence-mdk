@@ -10,6 +10,9 @@ This CLI tool allows you to export the page structure and contents of Wiki pages
  - [CLI Usage](#cli)
    - [`export` command](#cli-export)
    - [`neptune` command](#cli-neptune)
+ - [API Usage](#api)
+   - [`confluenceExport`](#api-confluenceexport)
+   - [`neptuneImport`](#api-neptuneimport)
 
 
 ## Install from Docker Hub
@@ -52,7 +55,7 @@ The `--env-file .docker-env` option points docker to your environments variables
 ## Install from NPM
 
 **Requirements:**
- - Node.js >= v14.13.0
+ - Node.js >= v12.0.0
 
 > If running on a personal machine and you do not already have Node.js installed, `webi` is the recommended install method since it will automatically configure node and npm for you:
 [https://webinstall.dev/node/](https://webinstall.dev/node/)
@@ -182,3 +185,77 @@ An example command:
 $ confluence-mdk neptune import --prefix wiki-rdf/ --graph  https://wiki.xyz.org/display/somespace < wiki-export.ttl
 ```
 
+
+### API: `confluenceExport`
+
+Fetch the metadata and contents of the given page as well as all of its children, then produce an RDF representation of that information serialized as Turtle.
+
+`async function confluenceExport(options: ExportConfig) => void`
+
+Where `ExportConfig` is defined by the interface:
+ - `'page': string` - URI, `space/title`, or page id of the root page to export
+ - `'server'?: string` - _optional_ URI origin of the Confluence server. can be ommitted if a URI is passed to `page`
+ - `'user': string` - username to use for basic auth
+ - `'pass': string` - password to use for basic auth
+ - `'output'?: stream.Writable` - _optional_ writable stream to output the RDF. defaults to stdout
+
+Example:
+```js
+import {
+  confluenceExport,
+} from 'confluence-mdk';
+
+(async() => {
+  await confluenceExport({
+    page: 'https://wiki.xyz.org/pages/viewpage.action?pageId=12345',
+    user: process.env.CONFLUENCE_USER,
+    pass: process.env.CONFLUENCE_PASS,
+    output: fs.createWriteStream('./export.ttl'),
+  });
+})();
+```
+
+Or, if using commonjs:
+```js
+const {
+  confluenceExport,
+} = require('confluence-mdk');
+```
+
+
+### API: `neptuneImport`
+
+Uploads the given Turtle file along with the fixed ontology to the configured S3 bucket (overwriting existing objects), clears the given named graph, then bulk loads the data from S3 into the given named graph.
+
+`async function neptuneImport(options: ImportConfig) => ImportResults`
+
+Where `ImportConfig` is defined by the interface:
+ - `'prefix': string` - S3 object key prefix, e.g., "confluence/rdf/" . notice the trailing slash
+ - `'graph': string` - IRI of the named graph to contain the triples, best practice is to use URI of the Wiki "space". this named graph will be cleared before being populated with the ontology and data
+ - `'input'?:  stream.Readable` - _optional_ readable stream to input the RDF data to be uploaded, ontology is automatically uploaded alongside
+
+Where `ImportResults` will be an object with the following format:
+ - `'clear'` - demarshalled JSON response from issuing the SPARQL command that clears the triples in the named graph
+ - `'load'` - demarshalled JSON response from the bulk upload command that loads data into the named graph from the S3 bucket
+
+Example:
+```js
+import {
+  neptuneImport,
+} from 'confluence-mdk';
+
+(async() => {
+  await neptuneImport({
+    prefix: 'confluence/rdf/',
+    graph: 'https://wiki.xyz.org/display/wip/World+Domination',
+    input: fs.createReadStream('./export.ttl'),
+  });
+})();
+```
+
+Or, if using commonjs:
+```js
+const {
+  neptuneImport,
+} = require('confluence-mdk');
+```

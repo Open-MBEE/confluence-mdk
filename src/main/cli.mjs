@@ -125,7 +125,10 @@ y_yargs = y_yargs.command({
 
 				const k_s3 = new S3();
 
-				await k_s3.upload_stdin(s_s3_prefix);
+				await Promise.all([
+					k_s3.upload_ontology(s_s3_prefix),
+					k_s3.upload_stream(process.stdin, s_s3_prefix),
+				]);
 
 				const k_neptune = new NeptuneLoader();
 

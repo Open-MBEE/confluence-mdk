@@ -20,9 +20,22 @@ export async function xhtml_rdf(g_convert) {
 		server: p_server_url,
 		user: si_user,
 		pass: s_pass,
+		output: ds_out=process.stdout,
 	} = g_convert;
 
-	const p_server = (new URL(p_server_url)).origin;
+	let p_server;
+	if(!p_server_url) {
+		if(/^https?:\/\//.test(s_root_page)) {
+			const d_root_page = new URL(s_root_page);
+			p_server = d_root_page.origin;
+		}
+		else {
+			throw new Error('Must provide a URL to the Confluence server using the `server` option.');
+		}
+	}
+	else {
+		p_server = (new URL(p_server_url)).origin;
+	}
 
 	const p_endpoint = `${p_server}/rest/api`;
 
@@ -101,7 +114,7 @@ export async function xhtml_rdf(g_convert) {
 	});
 
 	// stdout
-	ds_writer.pipe(process.stdout);
+	ds_writer.pipe(ds_out);
 
 	// run crawler
 	const hc3_out = await k_crawler.run();

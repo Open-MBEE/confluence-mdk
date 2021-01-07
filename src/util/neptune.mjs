@@ -32,12 +32,12 @@ export class S3 {
 		}).promise();
 	}
 
-	async upload_stdin(s_prefix='') {
-		// upload ontology and stdin
-		return await Promise.all([
-			this._upload(fs.createReadStream(path.join(__dirname, '../asset/ontology.ttl')), `${s_prefix}ontology.ttl`),
-			this._upload(process.stdin, `${s_prefix}stdin.ttl`),
-		]);
+	upload_ontology(s_prefix='') {
+		return this._upload(fs.createReadStream(path.join(__dirname, '../asset/ontology.ttl')), `${s_prefix}ontology.ttl`);
+	}
+
+	upload_stream(ds_upload, s_prefix='') {
+		return this._upload(ds_upload, `${s_prefix}stdin.ttl`);
 	}
 }
 
