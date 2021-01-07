@@ -11,6 +11,7 @@ ENV CONFLUENCE_SERVER $confluence_server
 COPY . /app
 WORKDIR /app
 RUN npm install
+RUN npm run build
 RUN npm link
 
 ENTRYPOINT ["confluence-mdk"]
