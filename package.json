@@ -9,6 +9,7 @@
   "bin": {
     "confluence-mdk": "src/main/cli.mjs"
   },
+  "main": "./main/api.mjs",
   "engines": {
     "node": ">= 14.13.0"
   },
