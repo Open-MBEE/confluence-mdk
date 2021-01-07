@@ -55,7 +55,7 @@ The `--env-file .docker-env` option points docker to your environments variables
 ## Install from NPM
 
 **Requirements:**
- - Node.js >= v14.13.0
+ - Node.js >= v12.0.0
 
 > If running on a personal machine and you do not already have Node.js installed, `webi` is the recommended install method since it will automatically configure node and npm for you:
 [https://webinstall.dev/node/](https://webinstall.dev/node/)
@@ -215,6 +215,13 @@ import {
 })();
 ```
 
+Or, if using commonjs:
+```js
+const {
+  confluenceExport,
+} = require('confluence-mdk');
+```
+
 
 ### API: `neptuneImport`
 
@@ -244,4 +251,11 @@ import {
     input: fs.createReadStream('./export.ttl'),
   });
 })();
+```
+
+Or, if using commonjs:
+```js
+const {
+  neptuneImport,
+} = require('confluence-mdk');
 ```
