@@ -46,7 +46,7 @@ export async function neptuneLoad(gc_import) {
 }
 
 
-export async function neptuneImport(gc_import) {
+export async function runImport(gc_import) {
 	const s_s3_prefix = gc_import.prefix || '';
 
 	const k_s3 = new S3(gc_import);

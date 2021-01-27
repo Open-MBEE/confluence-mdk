@@ -26,7 +26,7 @@ This CLI tool allows you to export the page structure and contents of Wiki pages
    - [`ExportConfig`](#api-exportconfig)
    - [`neptuneClear`](#api-neptuneclear)
    - [`neptuneLoad`](#api-neptuneload)
-   - [`neptuneImport`](#api-neptuneimport)
+   - [`runImport`](#api-runimport)
    - [`ImportConfig`](#api-importconfig)
 
 
@@ -359,11 +359,11 @@ Loads all objects with the given S3 prefix into the given named graph on the Nep
 
 
 
-### API: `neptuneImport`
+### API: `runImport`
 
 Runs the above functions in order. All togetherm this will upload the given Turtle input stream along with the fixed ontology to the configured S3 bucket (overwriting existing objects), clear the given named graph, then bulk load the data from S3 into the given named graph.
 
-`async function neptuneImport(options: `[`ImportConfig`](#api-importconfig)`) => Promise<ImportResults>`
+`async function runImport(options: `[`ImportConfig`](#api-importconfig)`) => Promise<ImportResults>`
 
 See [ImportConfig here](#api-importconfig).
 
@@ -375,11 +375,11 @@ Where `ImportResults` will be an object with the following format:
 Example:
 ```js
 import {
-  neptuneImport,
+  runImport,
 } from 'confluence-mdk';
 
 (async() => {
-  await neptuneImport({
+  await runImport({
     prefix: 'confluence/rdf/',
     graph: 'https://wiki.xyz.org/display/wip/World+Domination',
     input: fs.createReadStream('./export.ttl'),
@@ -390,7 +390,7 @@ import {
 Or, if using commonjs:
 ```js
 const {
-  neptuneImport,
+  runImport,
 } = require('confluence-mdk');
 ```
 
