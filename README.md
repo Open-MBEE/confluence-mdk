@@ -43,13 +43,8 @@ $ docker pull openmbee/confluence-mdk:latest
 ```
 
 **Prepare:**
-Create a file to store configuration and user credentials that the tool will use to connect to Confluence wiki:
+Create a file to store configuration and user credentials that the tool will use to connect to Confluence wiki (remove the `export` keywords from the [example environment variables file](#environment-variables)) and name the file `.docker.env`, then pass it into the docker run command like so:
 
-For example, in a file called `.docker-env`
-```bash
-CONFLUENCE_SERVER=https://mms.xyz.org
-CONFLUENCE_USER=user
-CONFLUENCE_PASS=pass
 ```
 
 **Run:**
@@ -138,24 +133,38 @@ Options:
   --help     Show help                                                 [boolean]
 ```
 
-For local testing, it is recommended that your create a `.env` file with all the enviornment variables (docker users skip this step):
+### Environment Variables
+
+For local testing, it is recommended that your create a `.env` file with all the environment variables (docker users skip this step):
 
 For Linux and MacOS:
 ```bash
 #!/bin/bash
 export CONFLUENCE_SERVER=https://wiki.xyz.org
 
+###############################
 # user/pass
 export CONFLUENCE_USER=user
 export CONFLUENCE_PASS=pass
 
 # OR, using a personal access token
 export CONFLUENCE_TOKEN=<yourPersonalAccessToken>
+###############################
+
+export NEPTUNE_S3_BUCKET_URL=s3://my-bucket
+export NEPTUNE_S3_IAM_ROLE_ARN=arn:aws-us-gov:iam::123456784201:role/NeptuneLoadFromS3
+
+export AWS_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=AKIAZH1AZYX1BABA1AB2
+export AWS_SECRET_ACCESS_KEY=hoijAF/sEcRetAcc3SsKeYz/sjoAFNOJo18SOjos
+
+export SPARQL_ENDPOINT=https://my-sparql-endpoint.us-east-1.neptune.amazonaws.com:8182
+export SPARQL_PROXY=socks5://127.0.0.1:3032
 ```
 
 Then, simply `$ source .env` before running the CLI.
 
-For Windows:
+For Windows, use `set` instead of `export`, for example:
 ```powershell
 set CONFLUENCE_SERVER=https://wiki.xyz.org
 
