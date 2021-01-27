@@ -34,7 +34,7 @@
   "dependencies": {
     "@graphy/content.ttl.write": "^4.3.3",
     "@graphy/core.data.factory": "^4.3.3",
-    "aws-sdk": "^2.823.0",
+    "aws-sdk": "^2.831.0",
     "chalk": "^4.1.0",
     "node-xml-stream-parser": "^1.0.12",
     "socks-proxy-agent": "^5.0.0",
