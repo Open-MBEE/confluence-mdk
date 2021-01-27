@@ -1,6 +1,6 @@
 # confluence-mdk
 
-This CLI tool allows you to export the page structure and contents of Wiki pages from a Confluence space as RDF.
+This tool allows you to export the page structure and contents of Wiki pages from a Confluence space as RDF and upload the data along with a predefined ontology to a Neptune database. It offers a CLI as well as an API for node.js. It can be installed thru npm/yarn, dockerhub, or built from source.
 
 ## Contents
  - Install
@@ -45,9 +45,6 @@ $ docker pull openmbee/confluence-mdk:latest
 **Prepare:**
 Create a file to store configuration and user credentials that the tool will use to connect to Confluence wiki (remove the `export` keywords from the [example environment variables file](#environment-variables)) and name the file `.docker.env`, then pass it into the docker run command like so:
 
-```
-
-**Run:**
 ```console
 $ docker run -it --init --rm --env-file .docker-env openmbee/confluence-mdk:latest export --help
 ```
