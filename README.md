@@ -264,7 +264,7 @@ Outputs are logged to stdout.
 #### `s3`, `neptune` and `import` Environment variables:
 
  - ~`NEPTUNE_REGION` - the AWS region in which the Neptune cluster is located~ deprecated; use `AWS_REGION` instead
- - `AWS_REGION` - the AWS region in which the Neptune cluster is located
+ - `AWS_REGION` - the AWS region in which the Neptune cluster and S3 bucket are colocated
  - `NEPTUNE_S3_BUCKET_URL` - the `s3://...` bucket URL
  - `NEPTUNE_S3_IAM_ROLE_ARN` - the ARN associated with the Neptune cluster's role for loading data from S3
  - `AWS_ACCESS_KEY_ID`  - AWS access key id
@@ -360,7 +360,7 @@ Loads all objects with the given S3 prefix into the given named graph on the Nep
 
 ### API: `runImport`
 
-Runs the above functions in order. All togetherm this will upload the given Turtle input stream along with the fixed ontology to the configured S3 bucket (overwriting existing objects), clear the given named graph, then bulk load the data from S3 into the given named graph.
+Runs the above functions in order. All together this will upload the given Turtle input stream along with the fixed ontology to the configured S3 bucket (overwriting existing objects), clear the given named graph, then bulk load the data from S3 into the given named graph.
 
 `async function runImport(options: `[`ImportConfig`](#api-importconfig)`) => Promise<ImportResults>`
 
