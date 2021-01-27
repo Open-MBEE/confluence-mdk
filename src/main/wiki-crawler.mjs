@@ -21,17 +21,33 @@ const sleep = xt_wait => new Promise((fk_resolve) => {
 });
 
 export default class WikiCrawler {
-	constructor(gc_connection, si_root) {
-		this._gc_connection = gc_connection;
-		this._p_server = gc_connection.server;
+	static auth(gc_crawler) {
+		if(gc_crawler.token || process.env.CONFLUENCE_TOKEN) {
+			return `Bearer ${gc_crawler.token || process.env.CONFLUENCE_TOKEN}`;
+		}
+		else if(gc_crawler.user && gc_crawler.pass) {
+			return `Basic ${Buffer.from(gc_crawler.user+':'+gc_crawler.pass).toString('base64')}`;
+		}
+		else if(process.env.CONFLUENCE_USER && process.env.CONFLUENCE_PASS) {
+			return `Basic ${Buffer.from(process.env.CONFLUENCE_USER+':'+process.env.CONFLUENCE_PASS).toString('base64')}`;
+		}
+		else {
+			throw new Error(`No credentials were supplied for Confluence`);
+		}
+	}
+
+	constructor(gc_crawler, si_root) {
+		this._gc_crawler = gc_crawler;
+		this._p_server = gc_crawler.server;
 		this._si_root = si_root;
-		this._s_auth = `Basic ${Buffer.from(gc_connection.user+':'+gc_connection.pass).toString('base64')}`;
+		this._s_auth = WikiCrawler.auth(gc_crawler);
 		this._gc_req_get = {
 			method: 'GET',
 			headers: {
 				Authorization: this._s_auth,
 			},
 		};
+		this._b_recurse = gc_crawler.recurse;
 
 		this._hc3_out = {};
 		this._k_locks = new AsyncLockPool(16);
@@ -93,8 +109,27 @@ export default class WikiCrawler {
 	}
 
 	async run() {
-		await this._recurse(this._si_root);
+		if(this._b_recurse) {
+			await this._recurse(this._si_root);
+		}
+		else {
+			await this._convert(this._si_root);
+		}
 		return this._hc3_out;
+	}
+
+	async _children(si_parent) {
+		// query for all children
+		const g_search = await this._fetch(`${this._p_server}/rest/api/search?`+(new URLSearchParams({
+			cql: `type=page and parent=${si_parent}`,
+			limit: 1000,
+		})), this._gc_req_get);
+
+		return g_search.results.map(g => g.content.id);
+	}
+
+	async child_pages(si_parent) {
+		return (await this._children(si_parent)).map(si_page => `${this._p_server}/pages/viewpage.action?pageId=${si_page}`);
 	}
 
 	async _recurse(si_parent) {
@@ -103,16 +138,11 @@ export default class WikiCrawler {
 		// convert root
 		const sv1_parent = await this._convert(si_parent);
 
-		// query for all children
-		const g_search = await this._fetch(`${this._p_server}/rest/api/search?`+(new URLSearchParams({
-			cql: `type=page and parent=${si_parent}`,
-			limit: 1000,
-		})), this._gc_req_get);
+		// fetch children
+		const a_children = await this._children(si_parent);
 
-		// each result
-		const a_children = await Promise.all(g_search.results.map(async(g_result, i_result) => {
-			const si_child = g_result.content.id;
-
+		// set child relationships
+		hc3_out[sv1_parent][':childDocument'] = await Promise.all(a_children.map(async(si_child, i_result) => {
 			// stagger requests
 			await sleep(i_result * 50);
 
@@ -125,10 +155,6 @@ export default class WikiCrawler {
 			// append document child
 			return sv1_document;
 		}));
-
-
-		// child relationship
-		hc3_out[sv1_parent][':childDocument'] = a_children;
 
 		// return c3 outptut
 		return sv1_parent;

@@ -221,11 +221,20 @@ export const H_CTM_ROOT = {
 					':text': '"'+s_text,
 				}),
 			},
+
+			'ac:plain-text-body': {
+				text: s_text => ({
+					':text': '"'+s_text,
+				}),
+			},
 		},
 
-		collect: a_children => ({
-			':parameter': a_children.filter(hc2 => ':Parameter' === hc2.a),
-			...a_children.filter(hc2 => ':text' in hc2)[0],
-		}),
+		collect: (a_children) => {
+			const a_params = a_children.filter(hc2 => ':Parameter' === hc2.a);
+			return {
+				...(a_params.length? {':parameter': a_params}: {}),
+				...a_children.filter(hc2 => ':text' in hc2)[0],
+			};
+		},
 	},
 };

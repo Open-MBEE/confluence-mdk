@@ -16,12 +16,18 @@ export const request = (p_url, gc_request) => new Promise((fk_resolve) => {
 });
 
 // fetch required environment variable
-export function env(si_var) {
-	let s_value = process.env[si_var];
+export function env(...a_vars) {
+	let s_value = '';
+
+	// use first set var
+	for(const si_var of a_vars) {
+		s_value = process.env[si_var];
+		if(s_value) break;
+	}
 
 	// assert required environment variables
 	if(!s_value) {
-		throw new Error(`the following environment variable is required but is either not set or is empty: ${si_var}`);
+		throw new Error(`the following environment variable is required but is either not set or is empty: ${a_vars.join(' or ')}`);
 	}
 
 	return s_value;

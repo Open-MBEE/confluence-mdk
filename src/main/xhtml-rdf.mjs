@@ -14,14 +14,14 @@ import {
 	fetch,
 } from '../util/io.mjs';
 
-export async function xhtml_rdf(g_convert) {
+async function create_crawler(gc_convert) {
 	const {
 		page: s_root_page,
 		server: p_server_url,
 		user: si_user,
 		pass: s_pass,
-		output: ds_out=process.stdout,
-	} = g_convert;
+		recurse: b_recurse=false,
+	} = gc_convert;
 
 	let p_server;
 	if(!p_server_url) {
@@ -46,7 +46,7 @@ export async function xhtml_rdf(g_convert) {
 		})), {
 			method: 'GET',
 			headers: {
-				Authorization: `Basic ${Buffer.from(si_user+':'+s_pass).toString('base64')}`,
+				Authorization: WikiCrawler.auth(gc_convert),
 			},
 		});
 
@@ -82,7 +82,7 @@ export async function xhtml_rdf(g_convert) {
 		else if(s_path.startsWith('/display/')) {
 			const [, s_space, s_title] = /^\/display\/([^/]+)\/(.+)$/.exec(s_path);
 
-			si_root = await resolve_page_id(s_space, s_title);
+			si_root = await resolve_page_id(s_space, decodeURIComponent(s_title.replace(/\+/g, '%20')));
 		}
 		// unknown
 		else {
@@ -102,11 +102,20 @@ export async function xhtml_rdf(g_convert) {
 	}
 
 	// create crawler
-	const k_crawler = new WikiCrawler({
+	return new WikiCrawler({
+		...gc_convert,
 		server: p_server,
-		user: si_user,
-		pass: s_pass,
+		recurse: b_recurse,
 	}, si_root);
+}
+
+
+export async function xhtml_rdf(gc_convert) {
+	const {
+		output: ds_out=process.stdout,
+	} = gc_convert;
+
+	const k_crawler = await create_crawler(gc_convert);
 
 	// prep serializer
 	const ds_writer = new TurtleWriter({
@@ -124,5 +133,12 @@ export async function xhtml_rdf(g_convert) {
 		type: 'c3',
 		value: hc3_out,
 	});
+}
+
+
+export async function child_pages(gc_convert) {
+	const k_crawler = await create_crawler(gc_convert);
+
+	return await k_crawler.child_pages(k_crawler._si_root);
 }
 
