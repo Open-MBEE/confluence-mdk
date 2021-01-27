@@ -15,10 +15,12 @@ import {
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 export class S3 {
-	constructor() {
+	constructor(gc_aws) {
+		this._gc_aws = gc_aws;
+
 		this._y_s3 = new aws.S3({
 			apiVersion: '2006-03-01',
-			region: env('NEPTUNE_REGION'),
+			region: gc_aws.region || env('AWS_REGION', 'NEPTUNE_REGION'),
 			accessKeyId: env('AWS_ACCESS_KEY_ID'),
 			secretAccessKey: env('AWS_SECRET_ACCESS_KEY'),
 		});
@@ -26,7 +28,7 @@ export class S3 {
 
 	_upload(ds_upload, s_label) {
 		return this._y_s3.upload({
-			Bucket: url.parse(env('NEPTUNE_S3_BUCKET_URL')).hostname,
+			Bucket: url.parse(this._gc_aws.bucket || env('NEPTUNE_S3_BUCKET_URL')).hostname,
 			Key: s_label,
 			Body: ds_upload,
 		}).promise();
@@ -37,14 +39,15 @@ export class S3 {
 	}
 
 	upload_stream(ds_upload, s_prefix='') {
-		return this._upload(ds_upload, `${s_prefix}stdin.ttl`);
+		return this._upload(ds_upload, `${s_prefix}data.ttl`);
 	}
 }
 
 export class NeptuneLoader {
-	constructor() {
-		this._p_endpoint = env('SPARQL_ENDPOINT').replace(/\/$/, '');
-		this._s_region = env('NEPTUNE_REGION');
+	constructor(gc_aws) {
+		this._gc_aws = gc_aws;
+		this._p_endpoint = (gc_aws.sparql_endpoint || env('SPARQL_ENDPOINT')).replace(/\/$/, '');
+		this._s_region = gc_aws.region || env('AWS_REGION', 'NEPTUNE_REGION');
 
 		const p_proxy = process.env.SPARQL_PROXY;
 		this._d_agent = p_proxy? new SocksProxyAgent(p_proxy): https.globalAgent;
@@ -111,7 +114,7 @@ export class NeptuneLoader {
 		prefix: s_prefix,
 		graph: p_graph=null,
 	}) {
-		const p_source = `${env('NEPTUNE_S3_BUCKET_URL')}/${s_prefix}`;
+		const p_source = `${(this._gc_aws.bucket || env('NEPTUNE_S3_BUCKET_URL')).replace(/\/$/, '')}/${s_prefix}`;
 
 		// 
 		console.warn(`initiating neptune load from s3 bucket...`);
@@ -120,8 +123,8 @@ export class NeptuneLoader {
 		let a_body = await upload({
 			source: p_source,
 			format: 'turtle',  // AWS should really change this to the correct MIME type: text/turtle
-			iamRoleArn: env('NEPTUNE_S3_IAM_ROLE_ARN'),
-			region: env('NEPTUNE_REGION'),
+			iamRoleArn: this._gc_aws.neptune_s3_iam_role_arn || env('NEPTUNE_S3_IAM_ROLE_ARN'),
+			region: this._s_region,
 			failOnError: 'TRUE',
 			...(p_graph
 				? {
