@@ -121,10 +121,10 @@ The CLI has several commands, most having subcommands:
 confluence-mdk <command>
 
 Commands:
-  cli.mjs wiki <subcommand>     Manipulate the Confluence Wiki
-  cli.mjs s3 <subcommand>       Control a remote S3 Bucket
-  cli.mjs neptune <subcommand>  Control a remote AWS Neptune triplestore
-  cli.mjs import                Import an exported dataset into a Neptune databa
+  confluence-mdk wiki <subcommand>     Manipulate the Confluence Wiki
+  confluence-mdk s3 <subcommand>       Control a remote S3 Bucket
+  confluence-mdk neptune <subcommand>  Control a remote AWS Neptune triplestore
+  confluence-mdk import                Import an exported dataset into a Neptune databa
                                 se (composition of `s3` and `neptune` commands a
                                 bove)
 
