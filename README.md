@@ -19,8 +19,8 @@ This CLI tool allows you to export the page structure and contents of Wiki pages
      - [`load` subcommand](#cli-neptune-load)
    - [`import` command](#cli-import)
  - [API Usage](#api)
-   - [`confluenceExport`](#api-confluenceexport)
-   - [`confluenceChildPages`](#api-confluencechildpages)
+   - [`wikiExport`](#api-wikiexport)
+   - [`wikiChildPages`](#api-wikichildpages)
    - [`s3UploadData`](#api-s3uploaddata)
    - [`s3UploadOntology`](#api-s3uploadontology)
    - [`ExportConfig`](#api-exportconfig)
@@ -268,20 +268,20 @@ Outputs are logged to stdout.
 ----------------
 
 
-### API: `confluenceExport`
+### API: `wikiExport`
 
 Fetch the metadata and contents of the given page as well as all of its children, then produce an RDF representation of that information serialized as Turtle.
 
-`async function confluenceExport(options: `[`ExportConfig`](#api-exportconfig)`) => Promise<void>`
+`async function wikiExport(options: `[`ExportConfig`](#api-exportconfig)`) => Promise<void>`
 
 Example:
 ```js
 import {
-  confluenceExport,
+  wikiExport,
 } from 'confluence-mdk';
 
 (async() => {
-  await confluenceExport({
+  await wikiExport({
     page: 'https://wiki.xyz.org/pages/viewpage.action?pageId=12345',
     user: process.env.CONFLUENCE_USER,
     pass: process.env.CONFLUENCE_PASS,
@@ -293,16 +293,16 @@ import {
 Or, if using commonjs:
 ```js
 const {
-  confluenceExport,
+  wikiExport,
 } = require('confluence-mdk');
 ```
 
 
-### API: `confluenceChildPages`
+### API: `wikiChildPages`
 
 Retrieve the child pages of the given Confluence page.
 
-`async function confluenceExport(options: `[`ExportConfig`](#api-exportconfig)`) => Promise<string[]>`
+`async function wikiExport(options: `[`ExportConfig`](#api-exportconfig)`) => Promise<string[]>`
 
 
 

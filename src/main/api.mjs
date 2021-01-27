@@ -9,11 +9,11 @@ import {
 	NeptuneLoader,
 } from '../util/neptune.mjs';
 
-export async function confluenceExport(gc_export) {
+export async function wikiExport(gc_export) {
 	return await xhtml_rdf(gc_export);
 }
 
-export async function confluenceChildPages(gc_export) {
+export async function wikiChildPages(gc_export) {
 	return await child_pages(gc_export);
 }
 
