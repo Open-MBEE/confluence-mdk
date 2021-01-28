@@ -18,8 +18,6 @@ async function create_crawler(gc_convert) {
 	const {
 		page: s_root_page,
 		server: p_server_url,
-		user: si_user,
-		pass: s_pass,
 		recurse: b_recurse=false,
 	} = gc_convert;
 
@@ -139,6 +137,6 @@ export async function xhtml_rdf(gc_convert) {
 export async function child_pages(gc_convert) {
 	const k_crawler = await create_crawler(gc_convert);
 
-	return await k_crawler.child_pages(k_crawler._si_root);
+	return await k_crawler.child_pages(k_crawler._si_root, gc_convert.as_urls);
 }
 

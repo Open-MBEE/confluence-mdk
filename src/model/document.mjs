@@ -169,7 +169,7 @@ export class Document {
 
 		// only a single text node
 		let s_text_simple = null;
-		if(a_children && 1 === a_children.length && '__text__' === a_children[0]['#name']) {
+		if((a_children && 1 === a_children.length && '__text__' === a_children[0]['#name'])) {
 			s_text_simple = escape_html(a_children[0].$text);
 		}
 
@@ -230,7 +230,7 @@ export class Document {
 				}
 				// unmapped
 				else {
-					console.warn(`unmapped tag '${s_tag_child}'`);
+					console.warn(`unmapped tag '${s_tag_child}' in ${JSON.stringify(g_element, null, '\t')}'`);
 					debugger;
 				}
 			}

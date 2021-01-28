@@ -59,7 +59,7 @@ The `--env-file .docker-env` option points docker to your environments variables
 
 
 
-## Install from NPM
+## Install from NPM/Yarn
 
 **Requirements:**
  - Node.js >= v12.0.0
@@ -190,7 +190,7 @@ $ confluence-mdk wiki export https://wiki.xyz.org/display/somespace/PageTitle --
 
 #### CLI: `wiki child-pages`
 
-Print a line-delimited list (or as JSON array using `--json` flag) of URLs of the target's child pages.
+Print a line-delimited list (or as JSON array using `--json` flag) of page IDs (or as URLs using `--urls` flag) of the target's child pages.
 
 
 ### CLI: `s3`
@@ -305,7 +305,7 @@ const {
 
 ### API: `wikiChildPages`
 
-Retrieve the child pages of the given Confluence page.
+Retrieve the page IDs for the child pages of the given Confluence page.
 
 `async function wikiExport(options: `[`ExportConfig`](#api-exportconfig)`) => Promise<string[]>`
 
@@ -320,6 +320,7 @@ is defined by the interface:
  - `'pass'?: string` - password to use for basic auth. defaults to `CONFLUENCE_PASS` env var otherwise
  - `'output'?: stream.Writable` - _optional_ writable stream to output the RDF. defaults to stdout
  - `'recurse'?: boolean` - _optional_ whether or not to recursively export the children of this page. defaults to `false`
+ - `'as_urls'?: boolean` - _optional_ only applies to `wikiChildPages`, returns child pages as URLs instead of page IDs
 
 
 
