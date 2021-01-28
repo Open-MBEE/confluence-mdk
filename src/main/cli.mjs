@@ -105,12 +105,16 @@ y_yargs = y_yargs.command({
 		})
 		.command({
 			command: 'child-pages <PAGE> [OPTIONS...]',
-			describe: 'Print a line-delimited list of URLs of the target\'s child pages',
+			describe: 'Print a line-delimited list of page IDs of the target\'s child pages',
 			builder: __yargs => wiki_subcommand(__yargs
 				.usage('confluence-mdk wiki child-pages PAGE [OPTIONS...]'), {/* eslint-disable indent */
 					json: {
 						type: 'boolean',
 						describe: 'print the results as a JSON array',
+					},
+					urls: {
+						type: 'boolean',
+						describe: 'return the URL of each page instead of its ID',
 					},
 				}),  /* eslint-enable indent */
 			handler: wrap_handler(async(g_argv) => {
@@ -119,6 +123,7 @@ y_yargs = y_yargs.command({
 				const a_pages = await child_pages({
 					page: s_root_page,
 					server: p_server,
+					as_urls: g_argv.urls,
 				});
 
 				if(g_argv.json) {

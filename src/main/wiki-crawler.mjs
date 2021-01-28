@@ -60,8 +60,19 @@ export default class WikiCrawler {
 		return w_data;
 	}
 
+	_url(si_page) {
+		return `>${this._p_server}/pages/viewpage.action?pageId=${si_page}`;
+	}
+
 	async _convert(si_page) {
 		console.warn(`fetching ${si_page}...`);
+
+		const hc3_out = this._hc3_out;
+
+		const sv1_document = this._url(si_page);
+
+		// fetch children
+		const a_children = await this._children(si_page);
 
 		// fetch page content
 		const g_content = await this._fetch(`${this._p_server}/rest/api/content/${si_page}?`+(new URLSearchParams({
@@ -72,7 +83,7 @@ export default class WikiCrawler {
 		const s_xml = `<page src="${si_page}">${g_content.body.storage.value}</page>`;
 
 		// parse document
-		return await new Promise((fk_resolve, fe_reject) => {
+		await new Promise((fk_resolve, fe_reject) => {
 			(new xml2js.Parser({
 				attrkey: '$attrs',
 				charkey: '$text',
@@ -95,17 +106,38 @@ export default class WikiCrawler {
 					const k_document = new Document(g_document);
 
 					// apply transform
-					const sv1_document = `>${this._p_server}/pages/viewpage.action?pageId=${si_page}`;
-					this._hc3_out[sv1_document] = {
+					hc3_out[sv1_document] = {
 						a: ':Document',
 						':title': '"'+g_content.title,
 						'dc:title': '"'+g_content.title,
 						':content': [k_document.transform()],
 					};
-					fk_resolve(sv1_document);
+
+					// resolve promise
+					fk_resolve();
 				});
 			});
 		});
+
+		// set child relationships
+		hc3_out[sv1_document][':childDocument'] = a_children.map((si_child) => {
+			const sv1_child = this._url(si_child);
+
+			// parent relatioonship
+			hc3_out[sv1_child] = {
+				':parentDocument': sv1_document,
+			};
+
+			// append document child
+			return sv1_child;
+		});
+
+
+		// struct
+		return {
+			v1_iri: sv1_document,
+			children: a_children,
+		};
 	}
 
 	async run() {
@@ -128,32 +160,26 @@ export default class WikiCrawler {
 		return g_search.results.map(g => g.content.id);
 	}
 
-	async child_pages(si_parent) {
-		return (await this._children(si_parent)).map(si_page => `${this._p_server}/pages/viewpage.action?pageId=${si_page}`);
+	async child_pages(si_parent, b_as_urls=false) {
+		const a_children = (await this._children(si_parent));
+		if(b_as_urls) return a_children.map(si_page => `${this._p_server}/pages/viewpage.action?pageId=${si_page}`);
+		return a_children;
 	}
 
 	async _recurse(si_parent) {
-		const hc3_out = this._hc3_out;
-
 		// convert root
-		const sv1_parent = await this._convert(si_parent);
+		const {
+			v1_iri: sv1_parent,
+			children: a_children,
+		} = await this._convert(si_parent);
 
-		// fetch children
-		const a_children = await this._children(si_parent);
-
-		// set child relationships
-		hc3_out[sv1_parent][':childDocument'] = await Promise.all(a_children.map(async(si_child, i_result) => {
+		// recurse on children
+		await Promise.all(a_children.map(async(si_child, i_result) => {
 			// stagger requests
 			await sleep(i_result * 50);
 
 			// convert document
-			const sv1_document = await this._recurse(si_child);
-
-			// parent relatioonship
-			hc3_out[sv1_document][':parentDocument'] = sv1_parent;
-
-			// append document child
-			return sv1_document;
+			await this._recurse(si_child);
 		}));
 
 		// return c3 outptut

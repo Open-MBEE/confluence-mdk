@@ -64,6 +64,13 @@ export const H_CTM_ROOT = {
 		},
 	}), {}),
 
+	__text__: {
+		raw: g_element => ({
+			a: ':TextNode',
+			':text': '"'+g_element.$text,
+		}),
+	},
+
 	p: {
 		auto: (hc2_content, h_attrs) => nonempty(hc2_content, {
 			a: ':Paragraph',
