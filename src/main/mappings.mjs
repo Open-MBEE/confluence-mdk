@@ -89,6 +89,7 @@ export const H_CTM_ROOT = {
 		auto: (hc2_content, h_attrs) => ({
 			a: ':ExternalLink',
 			':href': '^xsd:anyURI"'+(h_attrs.href || ''),
+			...(h_attrs.href && !h_attrs.href.includes(' ')? {':hrefLinked':'>'+h_attrs.href}: {}),
 			...hc2_content,
 		}),
 	},

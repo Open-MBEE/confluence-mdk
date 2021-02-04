@@ -105,11 +105,26 @@ export default class WikiCrawler {
 					// prep transform
 					const k_document = new Document(g_document);
 
+					// webui link
+					const sr_webui = g_content._links.webui;
+
+					// present
+					let sv1_webui = '';
+					if(sr_webui) {
+						sv1_webui = `>${this._p_server}${sr_webui}`;
+						hc3_out[sv1_webui] = {
+							'owl:sameAs': sv1_document,
+						};
+					}
+
 					// apply transform
 					hc3_out[sv1_document] = {
 						a: ':Document',
 						':title': '"'+g_content.title,
 						'dc:title': '"'+g_content.title,
+						...(sr_webui
+							? {'owl:sameAs': sv1_webui}
+							: {}),
 						':content': [k_document.transform()],
 					};
 
