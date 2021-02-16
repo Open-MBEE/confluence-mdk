@@ -92,6 +92,11 @@ y_yargs = y_yargs.command({
 						alias: 'r',
 						describe: 'recursively export the children of this page',
 					},
+					concurrency: {
+						type: 'number',
+						alias: 'c',
+						describe: 'HTTP request concurrency',
+					},
 				}),  /* eslint-enable indent */
 			handler: wrap_handler(async(g_argv) => {
 				const [p_server, s_root_page] = normalize_wiki_args(g_argv);
@@ -100,6 +105,7 @@ y_yargs = y_yargs.command({
 					page: s_root_page,
 					server: p_server,
 					recurse: g_argv.recurse,
+					concurrency: g_argv.concurrency || 0,
 				});
 			}),
 		})
