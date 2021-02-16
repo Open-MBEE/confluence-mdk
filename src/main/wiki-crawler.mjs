@@ -50,7 +50,7 @@ export default class WikiCrawler {
 		this._b_recurse = gc_crawler.recurse;
 
 		this._hc3_out = {};
-		this._k_locks = new AsyncLockPool(16);
+		this._k_locks = new AsyncLockPool(gc_crawler.concurrency || 16);
 	}
 
 	async _fetch(...a_args) {

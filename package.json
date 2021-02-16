@@ -1,29 +1,26 @@
 {
   "name": "confluence-mdk",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "CLI tool for Confluence MDK",
   "repository": {
     "type": "git",
     "url": "https://github.com/Open-MBEE/confluence-mdk.git"
   },
   "bin": {
-    "confluence-mdk": "./build/main/cli.js"
+    "confluence-mdk": "./src/main/cli.js"
   },
-  "main": "./build/main/api.js",
+  "main": "./src/main/api.js",
   "engines": {
-    "node": ">= 12.0.0"
+    "node": ">= 14.13.0"
   },
   "files": [
-    "build/"
+    "src/"
   ],
   "author": {
     "name": "Blake Regalia",
     "email": "blake.regalia@gmail.com"
   },
-  "scripts": {
-    "build": "npx babel src --out-dir build",
-    "clean": "rimraf build/"
-  },
+  "scripts": {},
   "keywords": [
     "confluence",
     "atlassian",

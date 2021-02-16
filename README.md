@@ -62,7 +62,7 @@ The `--env-file .docker-env` option points docker to your environments variables
 ## Install from NPM/Yarn
 
 **Requirements:**
- - Node.js >= v12.0.0
+ - Node.js >= v14.13.0
 
 > If running on a personal machine and you do not already have Node.js installed, `webi` is the recommended install method since it will automatically configure node and npm for you:
 [https://webinstall.dev/node/](https://webinstall.dev/node/)
@@ -320,6 +320,7 @@ is defined by the interface:
  - `'pass'?: string` - password to use for basic auth. defaults to `CONFLUENCE_PASS` env var otherwise
  - `'output'?: stream.Writable` - _optional_ writable stream to output the RDF. defaults to stdout
  - `'recurse'?: boolean` - _optional_ whether or not to recursively export the children of this page. defaults to `false`
+ - `'concurrency'?: number` - _optional_ maximum HTTP request concurrency to use when crawling
  - `'as_urls'?: boolean` - _optional_ only applies to `wikiChildPages`, returns child pages as URLs instead of page IDs
 
 
