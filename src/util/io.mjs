@@ -103,6 +103,9 @@ export function fetch(p_url, gc_request, f_connected=null) {
 				if(h_headers_view?.Authorization) {
 					h_headers_view.Authorization = h_headers_view.Authorization.replace(/^(Basic\s*)?.*$/, '$1*****');
 				}
+				if(gc_request_view.agent) {
+					gc_request_view.agent = '{HTTP(S).Agent}';
+				}
 
 				return fe_reject(new Error(`Unexpected response status ${n_status} from <${p_url}> '${ds_res.statusMessage}'; response body: '''\n${s_body}\n'''. Request metadata: ${JSON.stringify(gc_request_view, null, '\t')}`));
 			}

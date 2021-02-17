@@ -105,7 +105,7 @@ export class NeptuneLoader {
 
 			default: {
 				debugger;
-				throw new Error(`Neptune reported an error while trying to load data from the S3 bucket: ${s_status};\n${JSON.stringify(g_body)}`);
+				throw new Error(`Neptune reported an error while trying to load data from the S3 bucket: ${s_status};\n${JSON.stringify(a_body)}`);
 			}
 		}
 	}
