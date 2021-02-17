@@ -7,9 +7,9 @@
     "url": "https://github.com/Open-MBEE/confluence-mdk.git"
   },
   "bin": {
-    "confluence-mdk": "./src/main/cli.js"
+    "confluence-mdk": "./src/main/cli.mjs"
   },
-  "main": "./src/main/api.js",
+  "main": "./src/main/api.mjs",
   "engines": {
     "node": ">= 14.13.0"
   },

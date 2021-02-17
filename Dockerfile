@@ -11,7 +11,6 @@ ENV CONFLUENCE_SERVER $confluence_server
 COPY . /app
 WORKDIR /app
 RUN yarn install
-RUN yarn run build
 RUN yarn link
 
 ENTRYPOINT ["confluence-mdk"]
