@@ -12,8 +12,6 @@ import {
 	upload,
 } from '../util/io.mjs';
 
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-
 export class S3 {
 	constructor(gc_aws) {
 		this._gc_aws = gc_aws;
@@ -35,6 +33,7 @@ export class S3 {
 	}
 
 	upload_ontology(s_prefix='') {
+		const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 		return this._upload(fs.createReadStream(path.join(__dirname, '../asset/ontology.ttl')), `${s_prefix}ontology.ttl`);
 	}
 

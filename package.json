@@ -1,6 +1,6 @@
 {
   "name": "confluence-mdk",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "CLI tool for Confluence MDK",
   "repository": {
     "type": "git",
