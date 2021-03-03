@@ -120,6 +120,7 @@ export default class WikiCrawler {
 					// apply transform
 					hc3_out[sv1_document] = {
 						a: ':Document',
+						':pageId': '"'+si_page,
 						':title': '"'+g_content.title,
 						'dc:title': '"'+g_content.title,
 						...(sr_webui
