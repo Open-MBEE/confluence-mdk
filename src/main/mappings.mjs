@@ -225,6 +225,11 @@ export const H_CTM_ROOT = {
 			},
 
 			'ac:rich-text-body': {
+				auto: (hc2_content, h_attrs) => ({
+					...hc2_content,
+					...attrs_to_c2(h_attrs),
+				}),
+
 				text: s_text => ({
 					':text': '"'+s_text,
 				}),
@@ -241,7 +246,7 @@ export const H_CTM_ROOT = {
 			const a_params = a_children.filter(hc2 => ':Parameter' === hc2.a);
 			return {
 				...(a_params.length? {':parameter': a_params}: {}),
-				...a_children.filter(hc2 => ':text' in hc2)[0],
+				...a_children.filter(hc2 => ':text' in hc2 || ':body' in hc2)[0],
 			};
 		},
 	},
