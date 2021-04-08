@@ -21,6 +21,7 @@ export async function create_crawler(gc_convert) {
 		recurse: b_recurse=false,
 	} = gc_convert;
 
+	let si_space;
 	let p_server;
 	if(!p_server_url) {
 		if(/^https?:\/\//.test(s_root_page)) {
@@ -32,7 +33,8 @@ export async function create_crawler(gc_convert) {
 		}
 	}
 	else {
-		p_server = (new URL(p_server_url)).origin;
+		const d_server = new URL(p_server_url);
+		p_server = d_server.origin;
 	}
 
 	const p_endpoint = `${p_server}/rest/api`;
@@ -52,7 +54,7 @@ export async function create_crawler(gc_convert) {
 		if(!a_results.length) {
 			throw new Error(`No such wiki page found in space "${s_space}" with title "${s_title}"`);
 		}
-		else if(a_results.length > 2) {
+		else if(a_results.length > 1) {
 			throw new Error(`Unable to disambiguate, multiple wiki pages returned in space "${s_space}" with title "${s_title}"`);
 		}
 
@@ -60,7 +62,7 @@ export async function create_crawler(gc_convert) {
 		return a_results[0].content.id;
 	}
 
-	// prep page id
+	// prep page id and space key
 	let si_root;
 
 	// page id provided
@@ -80,6 +82,7 @@ export async function create_crawler(gc_convert) {
 		else if(s_path.startsWith('/display/')) {
 			const [, s_space, s_title] = /^\/display\/([^/]+)\/(.+)$/.exec(s_path);
 
+			si_space = s_space;
 			si_root = await resolve_page_id(s_space, decodeURIComponent(s_title.replace(/\+/g, '%20')));
 		}
 		// unknown
@@ -96,6 +99,7 @@ export async function create_crawler(gc_convert) {
 
 		const [, s_space, s_title] = m_space_title;
 
+		si_space = s_space;
 		si_root = await resolve_page_id(s_space, s_title);
 	}
 
@@ -103,6 +107,7 @@ export async function create_crawler(gc_convert) {
 	return new WikiCrawler({
 		...gc_convert,
 		server: p_server,
+		space_key: si_space,
 		recurse: b_recurse,
 	}, si_root);
 }

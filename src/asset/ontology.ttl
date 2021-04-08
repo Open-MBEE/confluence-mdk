@@ -115,6 +115,18 @@
 	rdfs:label "Macro" ;
 	.
 
+:Container a owl:Class ;
+	rdfs:subClassOf :DocumentElement ;
+	rdfs:label "Container" ;
+	:tag "div" ;
+	.
+
+:Paragraph a owl:Class ;
+	rdfs:subClassOf :DocumentElement ;
+	rdfs:label "Paragraph" ;
+	:tag "p" ;
+	.
+
 :Parameter a owl:Class ;
 	rdfs:subClassOf :DocumentElement ;
 	rdfs:label "Parameter" ;

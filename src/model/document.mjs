@@ -134,7 +134,7 @@ export class Document {
 		}
 
 		// nothing
-		debugger;
+		// debugger;
 		console.warn(`Mapping descriptor has no handler for routing child elements`);
 		return {};
 	}
@@ -231,7 +231,7 @@ export class Document {
 				// unmapped
 				else {
 					console.warn(`unmapped tag '${s_tag_child}' in ${JSON.stringify(g_element, null, '\t')}'`);
-					debugger;
+					// debugger;
 				}
 			}
 		}

@@ -6,6 +6,18 @@ import {
 } from '../util/data.mjs';
 
 
+const things = (h_data, h_mapping, f_map) => {
+	const h_out = {};
+	for(const [sc1_pred, si_key] of Object.entries(h_mapping)) {
+		if(si_key in h_data) {
+			h_out[sc1_pred] = f_map(h_data[si_key]);
+		}
+	}
+	return h_out;
+};
+
+const literals = (h_data, h_mapping) => things(h_data, h_mapping, s => '"'+s);
+
 const attrs_to_c2 = h_attrs => Object.entries(h_attrs)
 	.reduce((hc2_out, [si_key, s_value]) => ({
 		...hc2_out,
@@ -193,7 +205,10 @@ export const H_CTM_ROOT = {
 			'ri:page': {
 				enter: h_attrs => ({
 					a: ':PageReference',
-					':ref': '"'+h_attrs['ri:content-title'],
+					...literals(h_attrs, {
+						':ref': 'ri:content-title',
+						':spaceKey': 'ri:space-key',
+					}),
 				}),
 			},
 			'ac:plain-text-link-body': {
