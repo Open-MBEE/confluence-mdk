@@ -76,7 +76,7 @@ export default class WikiCrawler {
 
 		// fetch page content
 		const g_content = await this._fetch(`${this._p_server}/rest/api/content/${si_page}?`+(new URLSearchParams({
-			expand: 'body.storage',
+			expand: 'body.storage,version',
 		})), this._gc_req_get);
 
 		// wrap xhtml with root elemnent for parser
@@ -124,6 +124,8 @@ export default class WikiCrawler {
 						':pageId': '"'+si_page,
 						':title': '"'+g_content.title,
 						'dc:title': '"'+g_content.title,
+						':versionNumber': g_content.version.number,
+						'dc:modified': '^xsd:dateTime"'+g_content.version.when,
 						...(sr_webui
 							? {'owl:sameAs': sv1_webui}
 							: {}),
