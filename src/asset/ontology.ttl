@@ -14,6 +14,20 @@
 :DocumentElement a owl:Class ;
 	rdfs:label "Document Element" ;
 	.
+:Layout a owl:Class ;
+  rdfs:subClassOf :DocumentElement ;
+  rdfs:label "Layout" ;
+  .
+
+:LayoutSection a owl:Class ;
+  rdfs:subClassOf :DocumentElement ;
+  rdfs:label "LayoutSection" ;
+  .
+
+:LayoutCell a owl:Class ;
+  rdfs:subClassOf :DocumentElement ;
+  rdfs:label "LayoutCell" ;
+  .
 
 :Heading a owl:Class ;
 	rdfs:subClassOf :DocumentElement ;
@@ -204,6 +218,42 @@
 	] ;
 	.
 
+:LayoutSectionList a owl:Class ;
+  rdfs:subClassOf [
+    owl:intersectionOf (
+    	rdf:List
+    	[
+    		a owl:Restriction ;
+    		owl:onProperty rdf:first ;
+    		owl:allValuesFrom :LayoutSection ;
+    	]
+    	[
+    		a owl:Restriction ;
+    		owl:onProperty rdf:rest ;
+    		owl:allValuesFrom :LayoutSectionList ;
+    	]
+    ) ;
+  ] ;
+  .
+
+:LayoutCellList a owl:Class ;
+   rdfs:subClassOf [
+     owl:intersectionOf (
+     	rdf:List
+     	[
+     		a owl:Restriction ;
+     		owl:onProperty rdf:first ;
+     		owl:allValuesFrom :LayoutCell ;
+     	]
+     	[
+     		a owl:Restriction ;
+     		owl:onProperty rdf:rest ;
+     		owl:allValuesFrom :LayoutCellList ;
+     	]
+     ) ;
+   ] ;
+   .
+
 # properties
 
 :ancestorDocument a owl:TransitiveProperty ;
@@ -338,6 +388,18 @@ rdf:rest rdfs:subPropertyOf :after ;
 	rdfs:label "cells" ;
 	.
 
+:layoutSections a owl:ObjectProperty ;
+  rdfs:domain :Layout ;
+  rdfs:range :LayoutSectionList ;
+  rdfs:label "layoutSections" ;
+  .
+
+:layoutCells a owl:ObjectProperty ;
+  rdfs:domain :LayoutSection ;
+  rdfs:range :LayoutCellList ;
+  rdfs:label "layoutCells" ;
+  .
+
 :sibling a owl:SymmetricProperty, owl:IrreflexiveProperty ;
 	owl:propertyChainAxiom ( [ owl:inverseOf rdf:first ] rdf:rest rdf:first ) ;
 	rdfs:domain :DocumentElement ;
@@ -362,6 +424,12 @@ ac:schema-version a owl:DatatypeProperty ;
 	rdfs:range xsd:string ;
 	rdfs:label "ac:schema-version" ;
 	.
+
+ac:type a owl:DatatypeProperty ;
+  rdfs:domain :LayoutSection ;
+  rdfs:range xsd:string ;
+  rdfs:label "ac:type" ;
+  .
 
 :parameter a owl:ObjectProperty ;
 	rdfs:domain :Macro ;

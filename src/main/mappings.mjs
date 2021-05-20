@@ -46,7 +46,9 @@ const H_CTM_FORMATTING = {
 	br: {
 		flatten: () => `<br/>`,
 	},
-
+	pre: {
+		flatten: s => `<pre>${s}</pre>`
+	},
 	span: {
 		flatten: s => s,
 	},
@@ -113,6 +115,13 @@ export const H_CTM_ROOT = {
 		}),
 	},
 
+	ol: {
+		collect: a_items => ({
+			a: ':OrderedList',
+			':items': [a_items],
+		}),
+	},
+
 	table: {
 		children: {
 			colgroup: {
@@ -166,6 +175,39 @@ export const H_CTM_ROOT = {
 		}),
 	},
 
+	img: {
+		enter: h_attrs => ({
+			a: ':Img',
+			':src': '"' + h_attrs.src,
+		})
+	},
+
+	'ac:layout': {
+		children: {
+			'ac:layout-section': {
+				enter: h_attrs => ({
+					...attrs_to_c2(h_attrs),
+				}),
+				children: {
+					'ac:layout-cell': {
+						auto: hc2_content => ({
+							a: ':LayoutCell',
+							...hc2_content,
+						})
+					}
+				},
+				collect: a_cells => ({
+					a: ':LayoutSection',
+					':layoutCells': [a_cells]
+				}),
+			}
+		},
+		collect: a_sections => ({
+			a: ':Layout',
+			':layoutSections': [a_sections]
+		})
+	},
+
 	'ac:task-list': {
 		children: {
 			'ac:task': {
@@ -177,7 +219,7 @@ export const H_CTM_ROOT = {
 					},
 					'ac:task-status': {
 						text: s_status => ({
-							':taskStatus': '_TaskStatus.'+s_status,
+							':taskStatus': '"'+s_status,
 						}),
 					},
 					'ac:task-body': {
@@ -190,6 +232,8 @@ export const H_CTM_ROOT = {
 				collect: a_task => ({
 					a: ':Task',
 					...a_task[0],
+					...a_task[1],
+					...a_task[2]
 				}),
 			},
 		},

@@ -65,7 +65,7 @@ export default class WikiCrawler {
 	}
 
 	async _convert(si_page) {
-		console.warn(`fetching ${si_page}...`);
+		//console.warn(`fetching ${si_page}...`);
 
 		const hc3_out = this._hc3_out;
 
