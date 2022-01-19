@@ -82,7 +82,7 @@ export class NeptuneLoader {
 	}
 
 	async wait_for_completion(si_job) {
-		let a_body = this.check_job_status(si_job)
+		let a_body = await this.check_job_status(si_job)
 		// depending on the status string
 		let s_status = a_body[0].payload.overallStatus.status;
 		switch(s_status) {
