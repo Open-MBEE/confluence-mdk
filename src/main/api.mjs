@@ -45,11 +45,20 @@ export async function neptuneLoad(gc_import) {
 	});
 }
 
+export async function neptuneLoadAsync(gc_import) {
+	const k_neptune = new NeptuneLoader(gc_import);
+
+	return await k_neptune.load_from_s3_async({
+		prefix: gc_import.prefix || '',
+		graph: gc_import.graph,
+	});
+}
+
 export async function checkStatus(gc_import) {
 	const k_neptune = new NeptuneLoader(gc_import);
 	const s_job_id = gc_import.jobId || '';
 
-	return await k_neptune.check_job_status(s_job_id);
+	return k_neptune.check_job_status(s_job_id);
 }
 
 

@@ -72,7 +72,7 @@ export class NeptuneLoader {
 	}
 
 
-	async check_job_status(si_job) {
+	check_job_status(si_job) {
 		return fetch(`${this._p_endpoint}/loader/${si_job}?${new URLSearchParams({
 			details: true,
 			errors: true,
@@ -83,7 +83,7 @@ export class NeptuneLoader {
 	}
 
 	async wait_for_completion(si_job) {
-		let a_body = await this.check_job_status(si_job);
+		let a_body = this.check_job_status(si_job);
 		// depending on the status string
 		let s_status = a_body[0].payload.overallStatus.status;
 		switch(s_status) {
@@ -112,9 +112,9 @@ export class NeptuneLoader {
 		}
 	}
 
-	async load_from_s3({
+	async send_neptune_request({
 		prefix: s_prefix,
-		graph: p_graph=null,
+		graph: p_graph = null,
 	}) {
 		const p_source = `${(this._gc_aws.bucket || env('NEPTUNE_S3_BUCKET_URL')).replace(/\/$/, '')}/${s_prefix}`;
 
@@ -143,10 +143,39 @@ export class NeptuneLoader {
 			},
 		});
 
+		return a_body;
+	}
+
+	async load_from_s3({
+		prefix: s_prefix,
+		graph: p_graph=null,
+	}) {
+		const p_source = `${(this._gc_aws.bucket || env('NEPTUNE_S3_BUCKET_URL')).replace(/\/$/, '')}/${s_prefix}`;
+
+		//
+		console.warn(`initiating neptune load from s3 bucket...`);
+
+		// instruct Neptune instance to load all files from the S3 bucket
+		let a_body = await this.send_neptune_request({
+			prefix: s_prefix,
+			graph: p_graph
+		});
+
 		//
 		console.warn(`loading '${p_source}' from s3 bucket${p_graph? ` into ${p_graph}`: ''}...`);
 
 		// fetch job id
-		return a_body[0].payload.loadId;
+		return await this.wait_for_completion(a_body[0].payload.loadId);
+	}
+
+	async load_from_s3_async({
+		prefix: s_prefix,
+		graph: p_graph=null,
+	}) {
+		let a_body = await this.send_neptune_request({
+			prefix: s_prefix,
+			graph: p_graph
+		});
+		return a_body[0].payload.loadId
 	}
 }
