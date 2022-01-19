@@ -73,17 +73,14 @@ export class NeptuneLoader {
 
 
 	async check_job_status(si_job) {
-		return fetch(`${this._p_endpoint}/loader/${si_job}?${new URLSearchParams({
+		let a_body = await fetch(`${this._p_endpoint}/loader/${si_job}?${new URLSearchParams({
 			details: true,
 			errors: true,
 		})}`, {
 			method: 'GET',
 			agent: this._d_agent,
 		});
-	}
 
-	async wait_for_completion(si_job) {
-		let a_body = await this.check_job_status(si_job);
 		// depending on the status string
 		let s_status = a_body[0].payload.overallStatus.status;
 		switch(s_status) {
@@ -95,7 +92,7 @@ export class NeptuneLoader {
 				// check again
 				return await new Promise((fk_checked) => {
 					setTimeout(async() => {
-						fk_checked(await this.wait_for_completion(si_job));
+						fk_checked(await this.check_job_status(si_job));
 					}, 500);
 				});
 			}
@@ -118,7 +115,7 @@ export class NeptuneLoader {
 	}) {
 		const p_source = `${(this._gc_aws.bucket || env('NEPTUNE_S3_BUCKET_URL')).replace(/\/$/, '')}/${s_prefix}`;
 
-		//
+		// 
 		console.warn(`initiating neptune load from s3 bucket...`);
 
 		// instruct Neptune instance to load all files from the S3 bucket
@@ -147,6 +144,9 @@ export class NeptuneLoader {
 		console.warn(`loading '${p_source}' from s3 bucket${p_graph? ` into ${p_graph}`: ''}...`);
 
 		// fetch job id
-		return a_body[0].payload.loadId;
+		let si_job = a_body[0].payload.loadId;
+
+		// start polling job
+		return await this.check_job_status(si_job);
 	}
 }
