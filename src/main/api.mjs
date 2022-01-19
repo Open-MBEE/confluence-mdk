@@ -45,6 +45,13 @@ export async function neptuneLoad(gc_import) {
 	});
 }
 
+export async function checkStatus(gc_import) {
+	const k_neptune = new NeptuneLoader(gc_import);
+	const s_job_id = gc_import.jobId || '';
+
+	return await k_neptune.check_job_status(s_job_id);
+}
+
 
 export async function runImport(gc_import) {
 	const s_s3_prefix = gc_import.prefix || '';
