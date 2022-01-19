@@ -54,7 +54,7 @@ export async function neptuneLoadAsync(gc_import) {
 	});
 }
 
-export async function checkStatus(gc_import) {
+export function checkStatus(gc_import) {
 	const k_neptune = new NeptuneLoader(gc_import);
 	const s_job_id = gc_import.jobId || '';
 
