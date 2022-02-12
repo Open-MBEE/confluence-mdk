@@ -34,7 +34,7 @@
     "aws-sdk": "^2.831.0",
     "chalk": "^4.1.0",
     "node-xml-stream-parser": "^1.0.12",
-    "socks-proxy-agent": "^5.0.0",
+    "socks-proxy-agent": "^6.0.0",
     "stream-json": "^1.7.1",
     "xml2js": "^0.4.23",
     "yargs": "^16.2.0"
